@@ -1,0 +1,48 @@
+{
+  "name": "studyflow-backend",
+  "version": "1.0.0",
+  "description": "StudyFlow Backend API and PostgreSQL Database Layer",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "test:db": "tsx src/tests/db.test.ts",
+    "test:subject": "tsx src/tests/subject.test.ts",
+    "test:planner": "tsx src/tests/planner.test.ts",
+    "test:session": "tsx src/tests/session.test.ts",
+    "test:resource": "tsx src/tests/resource.test.ts",
+    "test:ai": "tsx src/tests/ai.test.ts",
+    "test:analytics": "tsx src/tests/analytics.test.ts",
+    "test:e2e": "tsx src/tests/e2e.test.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.9",
+    "prisma": "^6.4.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
