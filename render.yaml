@@ -40,7 +40,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        value: https://studyflow-backend.onrender.com/api/v1
+        value: https://studyflow-1-appz.onrender.com/api/v1
 
 databases:
   # 3. PostgreSQL Managed Database
