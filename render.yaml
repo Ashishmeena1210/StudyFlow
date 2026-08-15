@@ -21,9 +21,9 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: FRONTEND_URL
-        value: https://studyflow-frontend.onrender.com
+        value: https://study-flow-weld.vercel.app
       - key: CORS_ORIGIN
-        value: https://studyflow-frontend.onrender.com
+        value: https://study-flow-weld.vercel.app
       - key: AI_API_KEY
         sync: false
 

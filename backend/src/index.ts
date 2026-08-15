@@ -20,11 +20,12 @@ app.use(express.json());
 
 // Configure CORS
 const rawCors = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "*";
-const allowedOrigins = rawCors.split(",").map((o) => o.trim());
+const allowedOrigins = rawCors.split(",").map((o) => o.trim().replace(/\/$/, ""));
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+      const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
+      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(cleanOrigin)) {
         callback(null, true);
       } else {
         callback(new Error("CORS policy violation"));
