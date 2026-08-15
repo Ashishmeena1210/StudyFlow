@@ -1,5 +1,5 @@
 services:
-  # 1. Express Backend Service
+  # 1. Express Backend Web Service
   - type: web
     name: studyflow-backend
     runtime: node
@@ -21,15 +21,9 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: studyflow-frontend
-          property: url
+        value: https://studyflow-frontend.onrender.com
       - key: CORS_ORIGIN
-        fromService:
-          type: web
-          name: studyflow-frontend
-          property: url
+        value: https://studyflow-frontend.onrender.com
       - key: AI_API_KEY
         sync: false
 
@@ -46,11 +40,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: studyflow-backend
-          property: url
-        suffix: /api/v1
+        value: https://studyflow-backend.onrender.com/api/v1
 
 databases:
   # 3. PostgreSQL Managed Database
