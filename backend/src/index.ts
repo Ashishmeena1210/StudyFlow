@@ -16,48 +16,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json());
-
-// Configure CORS
-const defaultAllowed = [
-  "https://study-flow-weld.vercel.app",
-  "https://studyflow-frontend.onrender.com",
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "http://localhost:5000",
-];
-
-const rawCors = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "";
-const configuredOrigins = rawCors
-  .split(",")
-  .map((o) => o.trim().replace(/\/$/, ""))
-  .filter(Boolean);
-
-const allAllowed = Array.from(new Set([...defaultAllowed, ...configuredOrigins]));
-
+// Enable CORS for all origins with credentials support
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      const cleanOrigin = origin.replace(/\/$/, "");
-      const isVercelDomain = cleanOrigin.endsWith(".vercel.app");
-      const isRenderDomain = cleanOrigin.endsWith(".onrender.com");
-      const isLocalhost = cleanOrigin.includes("localhost") || cleanOrigin.includes("127.0.0.1");
-
-      if (
-        configuredOrigins.includes("*") ||
-        allAllowed.includes(cleanOrigin) ||
-        isVercelDomain ||
-        isRenderDomain ||
-        isLocalhost
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, false);
-    },
+    origin: true,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use(express.json());
 
 // Register API v1 Routes
 app.use("/api/v1/auth", authRoutes);
