@@ -2,6 +2,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Dummy DATABASE_URL so npx prisma generate succeeds during Docker image build stage
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
+
 COPY package*.json ./
 COPY prisma ./prisma/
 
@@ -27,4 +30,5 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 5000
 
+# Execute database migrations at runtime when Render supplies production DATABASE_URL
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
