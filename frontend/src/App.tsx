@@ -14,6 +14,7 @@ import NoteDetailsPage from "./pages/notes/notedetailspage";
 import ResourcesPage from "./pages/resources/resourcespage";
 import SubjectResourcePage from "./pages/resources/subjectresourcepage";
 import PlaceholderPage from "./pages/placeholder";
+import ProtectedRoute from "./components/protectedroute";
 
 import { TaskProvider } from "./context/taskcontext";
 import { GoalProvider } from "./context/goalcontext";
@@ -32,26 +33,20 @@ export default function App() {
               <ResourceProvider>
                 <Routes>
                   {/* Initial page */}
-                  <Route
-                    path="/"
-                    element={<Login />}
-                  />
+                  <Route path="/" element={<Login />} />
 
                   {/* Auth */}
-                  <Route
-                    path="/login"
-                    element={<Login />}
-                  />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
 
-                  <Route
-                    path="/register"
-                    element={<Register />}
-                  />
-
-                  {/* Dashboard */}
+                  {/* Protected Routes */}
                   <Route
                     path="/dashboard"
-                    element={<Dashboard />}
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
                   />
 
                   {/* REDIRECT LEGACY TASKS ROUTE TO PLANNER */}
@@ -63,7 +58,11 @@ export default function App() {
                   {/* STUDY PLANNER PAGE */}
                   <Route
                     path="/planner"
-                    element={<PlannerPage />}
+                    element={
+                      <ProtectedRoute>
+                        <PlannerPage />
+                      </ProtectedRoute>
+                    }
                   />
                   <Route
                     path="/planner/:goalId"
@@ -71,32 +70,97 @@ export default function App() {
                   />
 
                   {/* SUBJECTS PAGES */}
-                  <Route path="/subjects" element={<SubjectsPage />} />
-                  <Route path="/subjects/:subjectId" element={<SubjectDetailsPage />} />
+                  <Route
+                    path="/subjects"
+                    element={
+                      <ProtectedRoute>
+                        <SubjectsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/subjects/:subjectId"
+                    element={
+                      <ProtectedRoute>
+                        <SubjectDetailsPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   {/* STUDY SESSIONS & TIMER */}
-                  <Route path="/sessions" element={<StudySessionsPage />} />
-                  <Route path="/timer" element={<TimerPage />} />
+                  <Route
+                    path="/sessions"
+                    element={
+                      <ProtectedRoute>
+                        <StudySessionsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/timer"
+                    element={
+                      <ProtectedRoute>
+                        <TimerPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   {/* ANALYTICS, NOTES & RESOURCES */}
-                  <Route path="/analytics" element={<AnalyticsPage />} />
-                  <Route path="/notes" element={<NotesPage />} />
-                  <Route path="/notes/:noteId" element={<NoteDetailsPage />} />
-                  <Route path="/resources" element={<ResourcesPage />} />
-                  <Route path="/resources/subject/:subjectId" element={<SubjectResourcePage />} />
+                  <Route
+                    path="/analytics"
+                    element={
+                      <ProtectedRoute>
+                        <AnalyticsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/notes"
+                    element={
+                      <ProtectedRoute>
+                        <NotesPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/notes/:noteId"
+                    element={
+                      <ProtectedRoute>
+                        <NoteDetailsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/resources"
+                    element={
+                      <ProtectedRoute>
+                        <ResourcesPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/resources/subject/:subjectId"
+                    element={
+                      <ProtectedRoute>
+                        <SubjectResourcePage />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   {/* OTHER SIDEBAR MODULES */}
-                  <Route path="/settings" element={<PlaceholderPage />} />
+                  <Route
+                    path="/settings"
+                    element={
+                      <ProtectedRoute>
+                        <PlaceholderPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   {/* Fallback */}
                   <Route
                     path="*"
-                    element={
-                      <Navigate
-                        to="/dashboard"
-                        replace
-                      />
-                    }
+                    element={<Navigate to="/dashboard" replace />}
                   />
                 </Routes>
               </ResourceProvider>

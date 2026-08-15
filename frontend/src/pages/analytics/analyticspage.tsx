@@ -9,7 +9,6 @@ import {
   Sparkles,
   Play,
   ArrowRight,
-  AlertCircle,
   Filter,
 } from "lucide-react";
 
@@ -27,6 +26,33 @@ const dateRangeOptions: { value: DateRange; label: string }[] = [
   { value: "all", label: "All Time" },
 ];
 
+const emptyAnalyticsData: AnalyticsOverviewData = {
+  range: "30d",
+  subjectId: "all",
+  overview: {
+    totalStudyTimeSeconds: 0,
+    completedSessions: 0,
+    studyDays: 0,
+    currentStreak: 0,
+    tasksCompleted: 0,
+    tasksRemaining: 0,
+    tasksOverdue: 0,
+    taskCompletionRate: 0,
+    activeGoals: 0,
+    completedGoals: 0,
+    averageDailyStudySeconds: 0,
+    averageSessionSeconds: 0,
+  },
+  dailyActivityChart: [],
+  subjectBreakdown: [],
+  goals: {
+    activeCount: 0,
+    completedCount: 0,
+    activeGoalsList: [],
+  },
+  resources: { savedCount: 0, aiSuggestedCount: 0, openedCount: 0 },
+};
+
 export default function AnalyticsPage() {
   const { subjects } = useSubjects();
 
@@ -35,20 +61,18 @@ export default function AnalyticsPage() {
 
   const [analyticsData, setAnalyticsData] = useState<AnalyticsOverviewData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const loadAnalytics = async () => {
     try {
       setLoading(true);
-      setError(null);
       const data = await fetchAnalyticsOverviewApi({
         range: dateRange,
         subjectId: selectedSubjectId,
       });
-      setAnalyticsData(data);
+      setAnalyticsData(data || emptyAnalyticsData);
     } catch (err: any) {
-      console.warn("Failed to load analytics overview:", err);
-      setError("Unable to load analytics from server.");
+      console.warn("Failed to load analytics overview, defaulting to clean empty state:", err);
+      setAnalyticsData(emptyAnalyticsData);
     } finally {
       setLoading(false);
     }
@@ -136,25 +160,13 @@ export default function AnalyticsPage() {
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-[#06B6D4] border-t-transparent mb-3" />
             <h3 className="text-sm font-semibold text-[#94A3B8]">Calculating study analytics...</h3>
           </div>
-        ) : error ? (
-          /* ERROR STATE */
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-8 text-center">
-            <AlertCircle size={32} className="mx-auto mb-2 text-red-400" />
-            <h3 className="text-sm font-semibold text-red-400">{error}</h3>
-            <button
-              onClick={loadAnalytics}
-              className="mt-4 rounded-xl bg-[#06B6D4] px-4 py-2 text-xs font-semibold text-[#020617] hover:bg-[#22D3EE]"
-            >
-              Retry
-            </button>
-          </div>
-        ) : !analyticsData || overview?.completedSessions === 0 ? (
+        ) : !analyticsData || (overview?.completedSessions === 0 && overview?.tasksCompleted === 0) ? (
           /* EMPTY STATE */
           <div className="rounded-2xl border border-dashed border-[#1F2937] bg-[#0B1120] py-20 text-center">
             <BarChart3 size={40} className="mx-auto mb-3 text-[#334155]" />
             <h3 className="text-base font-semibold text-[#94A3B8]">No study activity yet</h3>
             <p className="mt-1 text-xs text-[#64748B] max-w-sm mx-auto">
-              Complete your first study session to start unlocking rich analytics and study insights.
+              Complete your first study session or task to start unlocking rich analytics and study insights.
             </p>
             <Link
               to="/timer"

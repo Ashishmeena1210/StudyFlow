@@ -21,6 +21,7 @@ import TaskModel from "../tasks/components/taskmodel";
 
 import { useTasks, type Task, type Priority } from "../../context/taskcontext";
 import { useGoals } from "../../context/goalcontext";
+import { useSubjects } from "../../context/subjectcontext";
 
 const defaultSubjects = [
   "Networks",
@@ -59,6 +60,7 @@ export default function PlannerPage() {
   const navigate = useNavigate();
   const { tasks, loading: tasksLoading, error: tasksError, addTask, updateTask, deleteTask, toggleTask } = useTasks();
   const { loading: goalsLoading, error: goalsError } = useGoals();
+  const { subjects: contextSubjects, addSubject } = useSubjects();
 
   const loading = tasksLoading || goalsLoading;
 
@@ -93,10 +95,11 @@ export default function PlannerPage() {
   const availableSubjects = useMemo(() => {
     const set = new Set([
       ...defaultSubjects,
+      ...contextSubjects.map((s) => s.name),
       ...tasks.map((t) => t.subject),
     ]);
     return Array.from(set).filter(Boolean);
-  }, [tasks]);
+  }, [contextSubjects, tasks]);
 
   /*
    * --------------------------------
@@ -163,7 +166,21 @@ export default function PlannerPage() {
   /*
    * Handlers
    */
-  const handleSaveTask = (data: TaskSaveData) => {
+  const handleSaveTask = async (data: TaskSaveData) => {
+    if (data.subject) {
+      const subjectName = data.subject.trim();
+      const existing = contextSubjects.find(
+        (s) => s.name.toLowerCase() === subjectName.toLowerCase()
+      );
+      if (!existing) {
+        try {
+          await addSubject({ name: subjectName });
+        } catch (err) {
+          console.warn("Auto subject creation failed:", err);
+        }
+      }
+    }
+
     if (editingTask) {
       updateTask(editingTask.id, data);
       showToast(`Task "${data.title}" updated.`);
