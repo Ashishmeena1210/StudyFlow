@@ -1,13 +1,15 @@
 services:
+  # 1. Express Backend Service
   - type: web
     name: studyflow-backend
-    env: node
+    runtime: node
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: PORT
-        value: 5000
+        value: 10000
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
@@ -18,12 +20,40 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: studyflow-frontend
+          property: url
       - key: CORS_ORIGIN
-        sync: false
+        fromService:
+          type: web
+          name: studyflow-frontend
+          property: url
       - key: AI_API_KEY
         sync: false
 
+  # 2. Vite Frontend Web App (Static Site with SPA Routing)
+  - type: web
+    name: studyflow-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: studyflow-backend
+          property: url
+        suffix: /api/v1
+
 databases:
+  # 3. PostgreSQL Managed Database
   - name: studyflow-db
     databaseName: studyflow
     user: studyflow_user

@@ -19,7 +19,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 // Configure CORS
-const allowedOrigins = (process.env.CORS_ORIGIN || "*").split(",");
+const rawCors = process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "*";
+const allowedOrigins = rawCors.split(",").map((o) => o.trim());
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -81,7 +82,7 @@ app.get("/", (_req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 StudyFlow Backend API running on http://localhost:${PORT}`);
-  console.log(`📊 Database Health Check: http://localhost:${PORT}/health`);
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`🚀 StudyFlow Backend API running on port ${PORT}`);
+  console.log(`📊 Database Health Check: /health`);
 });
