@@ -30,5 +30,5 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 5000
 
-# Execute database migrations at runtime when Render supplies production DATABASE_URL
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+# Execute database sync at runtime when Render supplies production DATABASE_URL
+CMD ["sh", "-c", "npx prisma db push && node dist/index.js"]
